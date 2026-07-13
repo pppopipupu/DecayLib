@@ -21,7 +21,6 @@ import com.pppopipupu.decaylib.DecayManager;
 import com.pppopipupu.decaylib.DecayRegistry;
 import com.pppopipupu.decaylib.DecayRule;
 import com.pppopipupu.decaylib.IDecayTooltipProvider;
-import com.pppopipupu.decaylib.event.DecayEvent;
 import com.pppopipupu.decaylib.event.DecayEvent.DecayContext;
 
 @Mixin(value = Item.class)
@@ -50,7 +49,15 @@ public class MixinItemDecay {
         ItemStack stack = entityItem.getEntityItem();
         if (!DecayManager.isDecayable(stack)) return;
 
-        DecayManager.updateDecay(stack, world, entityItem.posX, entityItem.posY, entityItem.posZ, DecayContext.ENTITY_ITEM, entityItem, 0);
+        DecayManager.updateDecay(
+            stack,
+            world,
+            entityItem.posX,
+            entityItem.posY,
+            entityItem.posZ,
+            DecayContext.ENTITY_ITEM,
+            entityItem,
+            0);
     }
 
     @Inject(method = "addInformation", at = @At("RETURN"))
@@ -99,7 +106,9 @@ public class MixinItemDecay {
                     if ("item".equalsIgnoreCase(rule.action.type)) {
                         Item prodItem = (Item) Item.itemRegistry.getObject(rule.action.id);
                         if (prodItem != null) {
-                            list.add(StatCollector.translateToLocal("tooltip.decaylib.product") + " §b" + prodItem.getItemStackDisplayName(new ItemStack(prodItem)));
+                            list.add(
+                                StatCollector.translateToLocal("tooltip.decaylib.product") + " §b"
+                                    + prodItem.getItemStackDisplayName(new ItemStack(prodItem)));
                         }
                     }
                 }

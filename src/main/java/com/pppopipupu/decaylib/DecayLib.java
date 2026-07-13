@@ -3,12 +3,13 @@ package com.pppopipupu.decaylib;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pppopipupu.decaylib.recipe.DecayMergeRecipe;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import com.pppopipupu.decaylib.recipe.DecayMergeRecipe;
 
 @Mod(
     modid = DecayLib.MODID,
@@ -25,8 +26,7 @@ public class DecayLib {
     public static DecayLib instance;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-    }
+    public void preInit(FMLPreInitializationEvent event) {}
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {

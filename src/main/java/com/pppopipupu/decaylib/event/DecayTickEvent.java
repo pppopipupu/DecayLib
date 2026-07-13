@@ -1,11 +1,12 @@
 package com.pppopipupu.decaylib.event;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import com.pppopipupu.decaylib.event.DecayEvent.DecayContext;
+
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
 
 /**
  * 物品在容器中进行腐烂更新计时（每秒触发一次）时触发的事件。
@@ -25,7 +26,8 @@ public class DecayTickEvent extends Event {
 
     private long progressAmount = 20L;
 
-    public DecayTickEvent(World world, double x, double y, double z, ItemStack stack, DecayContext context, Object carrier, int slot) {
+    public DecayTickEvent(World world, double x, double y, double z, ItemStack stack, DecayContext context,
+        Object carrier, int slot) {
         this.world = world;
         this.x = x;
         this.y = y;

@@ -7,18 +7,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.minecraft.item.Item;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.item.Item;
 
 public class DecayConfig {
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
+        .create();
     private static final File CONFIG_FILE = new File("config/decaylib/decay.json");
 
     public static void load() {
-        if (!CONFIG_FILE.getParentFile().exists()) {
-            CONFIG_FILE.getParentFile().mkdirs();
+        if (!CONFIG_FILE.getParentFile()
+            .exists()) {
+            CONFIG_FILE.getParentFile()
+                .mkdirs();
         }
         if (!CONFIG_FILE.exists()) {
             writeDefaultConfig();
@@ -46,7 +51,8 @@ public class DecayConfig {
 
     private static void writeDefaultConfig() {
         DecayRuleList list = new DecayRuleList();
-        for (Map.Entry<Item, DecayRule> entry : DecayRegistry.getDefaultRules().entrySet()) {
+        for (Map.Entry<Item, DecayRule> entry : DecayRegistry.getDefaultRules()
+            .entrySet()) {
             list.rules.add(entry.getValue());
         }
 
@@ -58,6 +64,7 @@ public class DecayConfig {
     }
 
     private static class DecayRuleList {
+
         List<DecayRule> rules = new ArrayList<>();
     }
 }

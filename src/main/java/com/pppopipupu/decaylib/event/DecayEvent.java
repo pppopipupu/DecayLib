@@ -1,10 +1,11 @@
 package com.pppopipupu.decaylib.event;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
 
 /**
  * 物品彻底发生变质并转化为产物时触发的事件。
@@ -24,7 +25,8 @@ public class DecayEvent extends Event {
     private ItemStack productStack;
     private Entity productEntity;
 
-    public DecayEvent(World world, double x, double y, double z, ItemStack originalStack, DecayContext context, Object carrier, ItemStack productStack, Entity productEntity) {
+    public DecayEvent(World world, double x, double y, double z, ItemStack originalStack, DecayContext context,
+        Object carrier, ItemStack productStack, Entity productEntity) {
         this.world = world;
         this.x = x;
         this.y = y;

@@ -84,22 +84,21 @@ public class DecayManager {
         }
         if (clazz != null) {
             try {
-                return (Entity) clazz.getConstructor(World.class).newInstance(world);
-            } catch (Exception e) {
-            }
+                return (Entity) clazz.getConstructor(World.class)
+                    .newInstance(world);
+            } catch (Exception e) {}
         }
 
         for (Object objKey : EntityList.stringToClassMapping.keySet()) {
             if (objKey instanceof String) {
                 String registeredName = (String) objKey;
-                if (registeredName.equalsIgnoreCase(entityId) ||
-                    registeredName.endsWith("." + entityId) ||
-                    registeredName.endsWith(":" + entityId)) {
+                if (registeredName.equalsIgnoreCase(entityId) || registeredName.endsWith("." + entityId)
+                    || registeredName.endsWith(":" + entityId)) {
                     Class<?> c = (Class<?>) EntityList.stringToClassMapping.get(registeredName);
                     try {
-                        return (Entity) c.getConstructor(World.class).newInstance(world);
-                    } catch (Exception e) {
-                    }
+                        return (Entity) c.getConstructor(World.class)
+                            .newInstance(world);
+                    } catch (Exception e) {}
                 }
             }
         }
@@ -120,7 +119,8 @@ public class DecayManager {
      * @param carrier 携带该物品堆的容器或实体对象实例
      * @param slot    该物品在载体中所处的槽位索引
      */
-    public static void updateDecay(ItemStack stack, World world, double x, double y, double z, DecayContext context, Object carrier, int slot) {
+    public static void updateDecay(ItemStack stack, World world, double x, double y, double z, DecayContext context,
+        Object carrier, int slot) {
         if (world.isRemote) return;
         if (!isDecayable(stack)) return;
 
@@ -158,7 +158,16 @@ public class DecayManager {
             }
         }
 
-        DecayEvent event = new DecayEvent(world, x, y, z, stack, context, carrier, defaultProductStack, defaultProductEntity);
+        DecayEvent event = new DecayEvent(
+            world,
+            x,
+            y,
+            z,
+            stack,
+            context,
+            carrier,
+            defaultProductStack,
+            defaultProductEntity);
         MinecraftForge.EVENT_BUS.post(event);
 
         if (event.isCanceled()) {
@@ -170,7 +179,10 @@ public class DecayManager {
 
         if (prod != null) {
             if (toConsume == stack.stackSize) {
-                ItemStack finalProduct = new ItemStack(prod.getItem(), stack.stackSize * prod.stackSize, prod.getItemDamage());
+                ItemStack finalProduct = new ItemStack(
+                    prod.getItem(),
+                    stack.stackSize * prod.stackSize,
+                    prod.getItemDamage());
                 if (context == DecayContext.PLAYER_INVENTORY) {
                     EntityPlayer player = (EntityPlayer) carrier;
                     player.inventory.setInventorySlotContents(slot, finalProduct);
@@ -183,7 +195,10 @@ public class DecayManager {
                     entityItem.setEntityItemStack(finalProduct);
                 }
             } else {
-                ItemStack finalProduct = new ItemStack(prod.getItem(), toConsume * prod.stackSize, prod.getItemDamage());
+                ItemStack finalProduct = new ItemStack(
+                    prod.getItem(),
+                    toConsume * prod.stackSize,
+                    prod.getItemDamage());
                 EntityItem newEi = new EntityItem(world, x, y, z, finalProduct);
                 world.spawnEntityInWorld(newEi);
 

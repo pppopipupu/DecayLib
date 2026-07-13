@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.pppopipupu.decaylib.DecayManager;
-import com.pppopipupu.decaylib.event.DecayEvent;
 import com.pppopipupu.decaylib.event.DecayEvent.DecayContext;
 
 @Mixin(value = TileEntity.class)
