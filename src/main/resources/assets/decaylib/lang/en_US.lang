@@ -1,0 +1,3 @@
+tooltip.decaylib.decay=Decay Time Left: %s min %s sec
+tooltip.decaylib.decayed=Decayed
+tooltip.decaylib.product=Decay Product:
