@@ -35,8 +35,9 @@ public class DecayConfig {
             Map<Item, DecayRule> configRules = new HashMap<>();
             if (list != null && list.rules != null) {
                 for (DecayRule rule : list.rules) {
-                    Item item = (Item) Item.itemRegistry.getObject(rule.input);
-                    if (item != null) {
+                    Object obj = Item.itemRegistry.getObject(rule.input);
+                    if (obj instanceof Item) {
+                        Item item = (Item) obj;
                         configRules.put(item, rule);
                     } else {
                         DecayLib.LOG.warn("Failed to find item for decay rule: " + rule.input);
