@@ -14,7 +14,7 @@
   * 注: 本地构建采用的高版本 JDK (如 JDK 25) 搭配 Jabel 进行编译，编译输出目标保持 Java 8 兼容性，构建指令为 `.\gradlew.bat jar`。
 * **依赖支持**:
   * **Minecraft / Forge**: 核心容器与通用配方注册支持。
-  * **Mixin**: 使用 Mixin 框架向原版及前置模组的 Item 与 TileEntity 中注入每秒腐烂计时更新逻辑。
+  * **Mixin（来自Unimixins）**: 使用 Mixin 框架向原版及前置模组的 Item 与 TileEntity 中注入每秒腐烂计时更新逻辑。
 
 ## 2. 项目结构介绍
 
