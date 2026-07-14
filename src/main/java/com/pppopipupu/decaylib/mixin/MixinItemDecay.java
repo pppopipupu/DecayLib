@@ -1,5 +1,6 @@
 package com.pppopipupu.decaylib.mixin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.pppopipupu.decaylib.DecayAction;
 import com.pppopipupu.decaylib.DecayConfig;
 import com.pppopipupu.decaylib.DecayManager;
 import com.pppopipupu.decaylib.DecayRegistry;
@@ -108,14 +110,28 @@ public class MixinItemDecay {
             } else if (rule != null) {
                 if (rule.productTooltip != null && !rule.productTooltip.isEmpty()) {
                     list.add(StatCollector.translateToLocal(rule.productTooltip));
-                } else if (rule.action != null) {
-                    if ("item".equalsIgnoreCase(rule.action.type)) {
-                        Item prodItem = (Item) Item.itemRegistry.getObject(rule.action.id);
-                        if (prodItem != null) {
-                            list.add(
-                                StatCollector.translateToLocal("tooltip.decaylib.product") + " §b"
-                                    + prodItem.getItemStackDisplayName(new ItemStack(prodItem)));
+                } else {
+                    List<DecayAction> actionsList = new ArrayList<>();
+                    if (rule.actions != null) {
+                        actionsList.addAll(rule.actions);
+                    } else if (rule.action != null) {
+                        actionsList.add(rule.action);
+                    }
+
+                    List<String> prodNames = new ArrayList<>();
+                    for (DecayAction act : actionsList) {
+                        if (act != null && "item".equalsIgnoreCase(act.type)) {
+                            Item prodItem = (Item) Item.itemRegistry.getObject(act.id);
+                            if (prodItem != null) {
+                                prodNames.add("§b" + prodItem.getItemStackDisplayName(new ItemStack(prodItem)));
+                            }
                         }
+                    }
+
+                    if (!prodNames.isEmpty()) {
+                        list.add(
+                            StatCollector.translateToLocal("tooltip.decaylib.product") + " "
+                                + String.join(", ", prodNames));
                     }
                 }
             }

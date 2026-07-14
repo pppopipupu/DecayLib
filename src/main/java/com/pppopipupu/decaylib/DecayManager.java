@@ -1,5 +1,8 @@
 package com.pppopipupu.decaylib;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
@@ -92,7 +95,7 @@ public class DecayManager {
                 String registeredName = (String) objKey;
                 if (registeredName.equalsIgnoreCase(entityId) || registeredName.endsWith("." + entityId)
                     || registeredName.endsWith(":" + entityId)) {
-                    Class<?> c = (Class<?>) EntityList.stringToClassMapping.get(registeredName);
+                    Class<?> c = EntityList.stringToClassMapping.get(registeredName);
                     try {
                         return (Entity) c.getConstructor(World.class)
                             .newInstance(world);
@@ -148,17 +151,28 @@ public class DecayManager {
         DecayRule rule = DecayRegistry.getRule(stack.getItem());
         if (rule == null) return;
 
-        ItemStack defaultProductStack = null;
-        Entity defaultProductEntity = null;
+        List<ItemStack> defaultProductStacks = new ArrayList<>();
+        List<Entity> defaultProductEntities = new ArrayList<>();
 
-        if (rule.action != null) {
-            if ("item".equalsIgnoreCase(rule.action.type)) {
-                Item item = (Item) Item.itemRegistry.getObject(rule.action.id);
+        List<DecayAction> ruleActions = new ArrayList<>();
+        if (rule.actions != null) {
+            ruleActions.addAll(rule.actions);
+        } else if (rule.action != null) {
+            ruleActions.add(rule.action);
+        }
+
+        for (DecayAction act : ruleActions) {
+            if (act == null) continue;
+            if ("item".equalsIgnoreCase(act.type)) {
+                Item item = (Item) Item.itemRegistry.getObject(act.id);
                 if (item != null) {
-                    defaultProductStack = new ItemStack(item, rule.action.count, rule.action.damage);
+                    defaultProductStacks.add(new ItemStack(item, act.count, act.damage));
                 }
-            } else if ("entity".equalsIgnoreCase(rule.action.type)) {
-                defaultProductEntity = createEntity(rule.action.id, world);
+            } else if ("entity".equalsIgnoreCase(act.type)) {
+                Entity ent = createEntity(act.id, world);
+                if (ent != null) {
+                    defaultProductEntities.add(ent);
+                }
             }
         }
 
@@ -170,23 +184,26 @@ public class DecayManager {
             stack,
             context,
             carrier,
-            defaultProductStack,
-            defaultProductEntity);
+            defaultProductStacks,
+            defaultProductEntities);
         MinecraftForge.EVENT_BUS.post(event);
 
         if (event.isCanceled()) {
             return;
         }
 
-        int toConsume = (event.getProductEntity() != null) ? 1 : stack.stackSize;
-        ItemStack prod = event.getProductStack();
+        boolean hasEntities = !event.getProductEntities()
+            .isEmpty();
+        int toConsume = hasEntities ? 1 : stack.stackSize;
+        List<ItemStack> prods = event.getProductStacks();
 
-        if (prod != null) {
+        if (!prods.isEmpty()) {
+            ItemStack mainProd = prods.get(0);
             if (toConsume == stack.stackSize) {
                 ItemStack finalProduct = new ItemStack(
-                    prod.getItem(),
-                    stack.stackSize * prod.stackSize,
-                    prod.getItemDamage());
+                    mainProd.getItem(),
+                    stack.stackSize * mainProd.stackSize,
+                    mainProd.getItemDamage());
                 if (context == DecayContext.PLAYER_INVENTORY) {
                     EntityPlayer player = (EntityPlayer) carrier;
                     player.inventory.setInventorySlotContents(slot, finalProduct);
@@ -198,13 +215,29 @@ public class DecayManager {
                     EntityItem entityItem = (EntityItem) carrier;
                     entityItem.setEntityItemStack(finalProduct);
                 }
+
+                for (int i = 1; i < prods.size(); i++) {
+                    ItemStack otherProd = prods.get(i);
+                    if (otherProd != null) {
+                        ItemStack finalOther = new ItemStack(
+                            otherProd.getItem(),
+                            stack.stackSize * otherProd.stackSize,
+                            otherProd.getItemDamage());
+                        EntityItem newEi = new EntityItem(world, x, y, z, finalOther);
+                        world.spawnEntityInWorld(newEi);
+                    }
+                }
             } else {
-                ItemStack finalProduct = new ItemStack(
-                    prod.getItem(),
-                    toConsume * prod.stackSize,
-                    prod.getItemDamage());
-                EntityItem newEi = new EntityItem(world, x, y, z, finalProduct);
-                world.spawnEntityInWorld(newEi);
+                for (ItemStack prod : prods) {
+                    if (prod != null) {
+                        ItemStack finalProduct = new ItemStack(
+                            prod.getItem(),
+                            toConsume * prod.stackSize,
+                            prod.getItemDamage());
+                        EntityItem newEi = new EntityItem(world, x, y, z, finalProduct);
+                        world.spawnEntityInWorld(newEi);
+                    }
+                }
 
                 if (context == DecayContext.PLAYER_INVENTORY) {
                     EntityPlayer player = (EntityPlayer) carrier;
@@ -242,10 +275,11 @@ public class DecayManager {
             }
         }
 
-        if (event.getProductEntity() != null) {
-            Entity ent = event.getProductEntity();
-            ent.setPosition(x, y, z);
-            world.spawnEntityInWorld(ent);
+        for (Entity ent : event.getProductEntities()) {
+            if (ent != null) {
+                ent.setPosition(x, y, z);
+                world.spawnEntityInWorld(ent);
+            }
         }
 
         spawnDecayEffects(world, x, y, z);

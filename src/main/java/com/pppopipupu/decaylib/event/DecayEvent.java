@@ -1,5 +1,8 @@
 package com.pppopipupu.decaylib.event;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -22,9 +25,27 @@ public class DecayEvent extends Event {
     public final DecayContext context;
     public final Object carrier;
 
-    private ItemStack productStack;
-    private Entity productEntity;
+    private final List<ItemStack> productStacks = new ArrayList<>();
+    private final List<Entity> productEntities = new ArrayList<>();
 
+    public DecayEvent(World world, double x, double y, double z, ItemStack originalStack, DecayContext context,
+        Object carrier, List<ItemStack> productStacks, List<Entity> productEntities) {
+        this.world = world;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.originalStack = originalStack;
+        this.context = context;
+        this.carrier = carrier;
+        if (productStacks != null) {
+            this.productStacks.addAll(productStacks);
+        }
+        if (productEntities != null) {
+            this.productEntities.addAll(productEntities);
+        }
+    }
+
+    @Deprecated
     public DecayEvent(World world, double x, double y, double z, ItemStack originalStack, DecayContext context,
         Object carrier, ItemStack productStack, Entity productEntity) {
         this.world = world;
@@ -34,24 +55,56 @@ public class DecayEvent extends Event {
         this.originalStack = originalStack;
         this.context = context;
         this.carrier = carrier;
-        this.productStack = productStack;
-        this.productEntity = productEntity;
+        if (productStack != null) {
+            this.productStacks.add(productStack);
+        }
+        if (productEntity != null) {
+            this.productEntities.add(productEntity);
+        }
     }
 
     public ItemStack getProductStack() {
-        return productStack;
+        return productStacks.isEmpty() ? null : productStacks.get(0);
     }
 
     public void setProductStack(ItemStack productStack) {
-        this.productStack = productStack;
+        if (productStack == null) {
+            if (!productStacks.isEmpty()) {
+                productStacks.remove(0);
+            }
+        } else {
+            if (productStacks.isEmpty()) {
+                productStacks.add(productStack);
+            } else {
+                productStacks.set(0, productStack);
+            }
+        }
     }
 
     public Entity getProductEntity() {
-        return productEntity;
+        return productEntities.isEmpty() ? null : productEntities.get(0);
     }
 
     public void setProductEntity(Entity productEntity) {
-        this.productEntity = productEntity;
+        if (productEntity == null) {
+            if (!productEntities.isEmpty()) {
+                productEntities.remove(0);
+            }
+        } else {
+            if (productEntities.isEmpty()) {
+                productEntities.add(productEntity);
+            } else {
+                productEntities.set(0, productEntity);
+            }
+        }
+    }
+
+    public List<ItemStack> getProductStacks() {
+        return productStacks;
+    }
+
+    public List<Entity> getProductEntities() {
+        return productEntities;
     }
 
     public enum DecayContext {
