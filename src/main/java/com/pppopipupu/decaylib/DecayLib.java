@@ -11,11 +11,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(
-    modid = DecayLib.MODID,
-    version = "1.0.0",
-    name = "DecayLib",
-    acceptedMinecraftVersions = "[1.7.10]")
+@Mod(modid = DecayLib.MODID, version = "1.0.0", name = "DecayLib", acceptedMinecraftVersions = "[1.7.10]")
 public class DecayLib {
 
     public static final String MODID = "decaylib";
