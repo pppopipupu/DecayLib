@@ -15,8 +15,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
     modid = DecayLib.MODID,
     version = "1.0.0",
     name = "DecayLib",
-    acceptedMinecraftVersions = "[1.7.10]",
-    dependencies = "required-after:hbm")
+    acceptedMinecraftVersions = "[1.7.10]")
 public class DecayLib {
 
     public static final String MODID = "decaylib";
