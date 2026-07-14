@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -169,9 +170,16 @@ public class DecayManager {
                     defaultProductStacks.add(new ItemStack(item, act.count, act.damage));
                 }
             } else if ("entity".equalsIgnoreCase(act.type)) {
-                Entity ent = createEntity(act.id, world);
-                if (ent != null) {
-                    defaultProductEntities.add(ent);
+                for (int i = 0; i < act.count; i++) {
+                    Entity ent = createEntity(act.id, world);
+                    if (ent != null) {
+                        if (act.damage > 0 && ent instanceof EntityLivingBase) {
+                            EntityLivingBase living = (EntityLivingBase) ent;
+                            float newHealth = Math.max(1.0F, living.getMaxHealth() - act.damage);
+                            living.setHealth(newHealth);
+                        }
+                        defaultProductEntities.add(ent);
+                    }
                 }
             }
         }
