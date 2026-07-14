@@ -46,22 +46,22 @@ public class DecayManager {
             stack.setTagCompound(nbt);
         }
 
-        if (nbt.hasKey("spoilTime") && !nbt.hasKey("decayTimeLeft")) {
+        if (nbt.hasKey("spoilTime") && !nbt.hasKey("decayTime")) {
             long spoilTime = nbt.getLong("spoilTime");
             long duration = nbt.hasKey("spoilDuration") ? nbt.getLong("spoilDuration") : 72000L;
-            long remaining = spoilTime - world.getTotalWorldTime();
-            if (remaining < 0) remaining = 0;
-            nbt.setLong("decayTimeLeft", remaining);
+            nbt.setLong("decayTime", spoilTime);
             nbt.setLong("decayDuration", duration);
             nbt.removeTag("spoilTime");
             nbt.removeTag("spoilDuration");
         }
 
-        if (!nbt.hasKey("decayTimeLeft")) {
+
+
+        if (!nbt.hasKey("decayTime")) {
             DecayRule rule = DecayRegistry.getRule(stack.getItem());
             if (rule != null) {
                 long duration = rule.decayTime;
-                nbt.setLong("decayTimeLeft", duration);
+                nbt.setLong("decayTime", world.getTotalWorldTime() + duration);
                 nbt.setLong("decayDuration", duration);
             }
         }
@@ -129,17 +129,23 @@ public class DecayManager {
         DecayTickEvent tickEvent = new DecayTickEvent(world, x, y, z, stack, context, carrier, slot);
         MinecraftForge.EVENT_BUS.post(tickEvent);
 
+        NBTTagCompound nbt = stack.getTagCompound();
+        long decayTime = nbt.getLong("decayTime");
+        long defaultProgress = 20L;
+
         if (tickEvent.isCanceled()) {
+            nbt.setLong("decayTime", decayTime + defaultProgress);
             return;
         }
 
-        NBTTagCompound nbt = stack.getTagCompound();
-        long timeLeft = nbt.getLong("decayTimeLeft");
-        timeLeft -= tickEvent.getProgressAmount();
-        if (timeLeft < 0) timeLeft = 0;
-        nbt.setLong("decayTimeLeft", timeLeft);
+        long actualProgress = tickEvent.getProgressAmount();
+        if (actualProgress != defaultProgress) {
+            nbt.setLong("decayTime", decayTime + defaultProgress - actualProgress);
+            decayTime = decayTime + defaultProgress - actualProgress;
+        }
 
-        if (timeLeft > 0) return;
+        long remaining = decayTime - world.getTotalWorldTime();
+        if (remaining > 0) return;
 
         DecayRule rule = DecayRegistry.getRule(stack.getItem());
         if (rule == null) return;
@@ -158,16 +164,7 @@ public class DecayManager {
             }
         }
 
-        DecayEvent event = new DecayEvent(
-            world,
-            x,
-            y,
-            z,
-            stack,
-            context,
-            carrier,
-            defaultProductStack,
-            defaultProductEntity);
+        DecayEvent event = new DecayEvent(world, x, y, z, stack, context, carrier, defaultProductStack, defaultProductEntity);
         MinecraftForge.EVENT_BUS.post(event);
 
         if (event.isCanceled()) {

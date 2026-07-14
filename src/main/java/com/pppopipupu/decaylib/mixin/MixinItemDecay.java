@@ -71,9 +71,14 @@ public class MixinItemDecay {
 
         NBTTagCompound nbt = stack.getTagCompound();
         long timeLeft = duration;
-        if (nbt != null && nbt.hasKey("decayTimeLeft")) {
-            timeLeft = nbt.getLong("decayTimeLeft");
+        if (nbt != null) {
+            if (nbt.hasKey("decayTime")) {
+                timeLeft = nbt.getLong("decayTime") - player.worldObj.getTotalWorldTime();
+            } else if (nbt.hasKey("spoilTime")) {
+                timeLeft = nbt.getLong("spoilTime") - player.worldObj.getTotalWorldTime();
+            }
         }
+        if (timeLeft < 0) timeLeft = 0;
 
         if (timeLeft > 0) {
             long minutes = timeLeft / 1200;

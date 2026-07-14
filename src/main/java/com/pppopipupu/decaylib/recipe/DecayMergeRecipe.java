@@ -13,8 +13,13 @@ import com.pppopipupu.decaylib.DecayRule;
 
 public class DecayMergeRecipe implements IRecipe {
 
+    private long lastWorldTime = 0;
+
     @Override
     public boolean matches(InventoryCrafting inv, World world) {
+        if (world != null) {
+            this.lastWorldTime = world.getTotalWorldTime();
+        }
         int slotsCount = 0;
         Item targetItem = null;
 
@@ -39,7 +44,7 @@ public class DecayMergeRecipe implements IRecipe {
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         Item targetItem = null;
-        long totalTimeLeft = 0;
+        long totalDecayTime = 0;
         int slotsCount = 0;
         long defaultDuration = 72000L;
 
@@ -55,23 +60,30 @@ public class DecayMergeRecipe implements IRecipe {
                 }
 
                 NBTTagCompound nbt = stack.getTagCompound();
-                long timeLeft = defaultDuration;
-                if (nbt != null && nbt.hasKey("decayTimeLeft")) {
-                    timeLeft = nbt.getLong("decayTimeLeft");
+                long decayTime = 0;
+                if (nbt != null) {
+                    if (nbt.hasKey("decayTime")) {
+                        decayTime = nbt.getLong("decayTime");
+                    } else if (nbt.hasKey("spoilTime")) {
+                        decayTime = nbt.getLong("spoilTime");
+                    }
+                }
+                if (decayTime == 0) {
+                    decayTime = lastWorldTime + defaultDuration;
                 }
 
-                totalTimeLeft += timeLeft;
+                totalDecayTime += decayTime;
                 slotsCount++;
             }
         }
 
         if (slotsCount == 0) return null;
 
-        long avgTimeLeft = totalTimeLeft / slotsCount;
+        long avgDecayTime = totalDecayTime / slotsCount;
 
         ItemStack result = new ItemStack(targetItem, slotsCount);
         NBTTagCompound resultNbt = new NBTTagCompound();
-        resultNbt.setLong("decayTimeLeft", avgTimeLeft);
+        resultNbt.setLong("decayTime", avgDecayTime);
         resultNbt.setLong("decayDuration", defaultDuration);
         result.setTagCompound(resultNbt);
 
