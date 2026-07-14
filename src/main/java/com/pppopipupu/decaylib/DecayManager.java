@@ -60,7 +60,7 @@ public class DecayManager {
         if (!nbt.hasKey("decayTime")) {
             DecayRule rule = DecayRegistry.getRule(stack.getItem());
             if (rule != null) {
-                long duration = rule.decayTime;
+                long duration = (long) (rule.decayTime * DecayConfig.globalDecayMultiplier);
                 nbt.setLong("decayTime", world.getTotalWorldTime() + duration);
                 nbt.setLong("decayDuration", duration);
             }

@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.pppopipupu.decaylib.DecayConfig;
 import com.pppopipupu.decaylib.DecayManager;
 import com.pppopipupu.decaylib.DecayRegistry;
 import com.pppopipupu.decaylib.DecayRule;
@@ -67,7 +68,7 @@ public class MixinItemDecay {
 
         Item item = stack.getItem();
         DecayRule rule = DecayRegistry.getRule(item);
-        long duration = (rule != null) ? rule.decayTime : 72000L;
+        long duration = (rule != null) ? (long) (rule.decayTime * DecayConfig.globalDecayMultiplier) : 72000L;
 
         NBTTagCompound nbt = stack.getTagCompound();
         long timeLeft = duration;
