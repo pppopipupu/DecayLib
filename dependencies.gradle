@@ -1,6 +1,5 @@
 dependencies {
-    implementation(rfg.deobf(project.files("../HBMAletheiaAddon/libs/HBM-NTM-.1.0.27_X5751_H261.jar")))
-    
+
     implementation("com.github.GTNewHorizons:NotEnoughItems:2.7.69-GTNH:dev")
     compileOnly("com.github.GTNewHorizons:NotEnoughItems:2.7.69-GTNH:dev")
 
