@@ -19,7 +19,8 @@ import com.google.gson.GsonBuilder;
  */
 public class DecayConfig {
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
+        .create();
     private static final File CONFIG_FILE = new File("config/decaylib/decay.json");
 
     /**
@@ -33,8 +34,10 @@ public class DecayConfig {
      * 若配置文件不存在，则根据当前 Mod 注册的默认值自动在磁盘上生成默认的配置文件。
      */
     public static void load() {
-        if (!CONFIG_FILE.getParentFile().exists()) {
-            CONFIG_FILE.getParentFile().mkdirs();
+        if (!CONFIG_FILE.getParentFile()
+            .exists()) {
+            CONFIG_FILE.getParentFile()
+                .mkdirs();
         }
         if (!CONFIG_FILE.exists()) {
             writeDefaultConfig();
@@ -67,7 +70,8 @@ public class DecayConfig {
     private static void writeDefaultConfig() {
         DecayRuleList list = new DecayRuleList();
         list.globalDecayMultiplier = globalDecayMultiplier;
-        for (Map.Entry<Item, DecayRule> entry : DecayRegistry.getDefaultRules().entrySet()) {
+        for (Map.Entry<Item, DecayRule> entry : DecayRegistry.getDefaultRules()
+            .entrySet()) {
             list.rules.add(entry.getValue());
         }
 
@@ -79,6 +83,7 @@ public class DecayConfig {
     }
 
     private static class DecayRuleList {
+
         double globalDecayMultiplier = 1.0;
         List<DecayRule> rules = new ArrayList<>();
     }

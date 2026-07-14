@@ -55,8 +55,6 @@ public class DecayManager {
             nbt.removeTag("spoilDuration");
         }
 
-
-
         if (!nbt.hasKey("decayTime")) {
             DecayRule rule = DecayRegistry.getRule(stack.getItem());
             if (rule != null) {
@@ -164,7 +162,16 @@ public class DecayManager {
             }
         }
 
-        DecayEvent event = new DecayEvent(world, x, y, z, stack, context, carrier, defaultProductStack, defaultProductEntity);
+        DecayEvent event = new DecayEvent(
+            world,
+            x,
+            y,
+            z,
+            stack,
+            context,
+            carrier,
+            defaultProductStack,
+            defaultProductEntity);
         MinecraftForge.EVENT_BUS.post(event);
 
         if (event.isCanceled()) {
