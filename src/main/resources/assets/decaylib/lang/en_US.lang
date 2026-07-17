@@ -1,3 +1,7 @@
-tooltip.decaylib.decay=Decay Time Left: %s min %s sec
+tooltip.decaylib.decay=Decay Time Left: %s
+tooltip.decaylib.day=%s d 
+tooltip.decaylib.hour=%s h 
+tooltip.decaylib.minute=%s m 
+tooltip.decaylib.second=%s s
 tooltip.decaylib.decayed=Decayed
 tooltip.decaylib.product=Decay Product:

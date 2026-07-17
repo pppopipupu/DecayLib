@@ -84,8 +84,29 @@ public class MixinItemDecay {
         if (timeLeft < 0) timeLeft = 0;
 
         if (timeLeft > 0) {
-            long minutes = timeLeft / 1200;
-            long seconds = (timeLeft % 1200) / 20;
+            long totalSeconds = (timeLeft + 19) / 20;
+            long days = totalSeconds / 86400;
+            long hours = (totalSeconds % 86400) / 3600;
+            long minutes = (totalSeconds % 3600) / 60;
+            long seconds = totalSeconds % 60;
+            StringBuilder timeStr = new StringBuilder();
+            if (days > 0) {
+                timeStr.append(StatCollector.translateToLocalFormatted("tooltip.decaylib.day", days));
+            }
+            if (hours > 0) {
+                timeStr.append(StatCollector.translateToLocalFormatted("tooltip.decaylib.hour", hours));
+            }
+            if (minutes > 0) {
+                timeStr.append(StatCollector.translateToLocalFormatted("tooltip.decaylib.minute", minutes));
+            }
+            if (seconds > 0) {
+                timeStr.append(StatCollector.translateToLocalFormatted("tooltip.decaylib.second", seconds));
+            }
+            String formattedTime = timeStr.toString()
+                .trim();
+            if (formattedTime.isEmpty()) {
+                formattedTime = StatCollector.translateToLocalFormatted("tooltip.decaylib.second", 0);
+            }
             double ratio = (double) timeLeft / duration;
             String color;
             if (ratio > 0.5) {
@@ -102,7 +123,7 @@ public class MixinItemDecay {
             bar.append("§7");
             for (int i = filled; i < 20; i++) bar.append('|');
             bar.append("§r]");
-            list.add(StatCollector.translateToLocalFormatted("tooltip.decaylib.decay", minutes, seconds));
+            list.add(StatCollector.translateToLocalFormatted("tooltip.decaylib.decay", formattedTime));
             list.add(bar.toString());
 
             if (item instanceof IDecayTooltipProvider) {

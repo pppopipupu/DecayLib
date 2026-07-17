@@ -1,3 +1,7 @@
-tooltip.decaylib.decay=距离腐烂还有: %s分%s秒
+tooltip.decaylib.decay=距离腐烂还有: %s
+tooltip.decaylib.day=%s天
+tooltip.decaylib.hour=%s小时
+tooltip.decaylib.minute=%s分钟
+tooltip.decaylib.second=%s秒
 tooltip.decaylib.decayed=已腐烂
 tooltip.decaylib.product=腐烂产物:
